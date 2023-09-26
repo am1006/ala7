@@ -171,9 +171,9 @@
       \AtEndPreamble{%
         \@ifpackageloaded{biblatex}{%  the user has loaded biblatex
           \@ifundefined{def@thesis}{%
-            \defbibheading{bibliography}[\refname]{\section*{\normalfont\textbf{#1}}}%
+            \defbibheading{bibliography}[\refname]{\chapter*{\normalfont\textbf{#1}}}%
           }{%
-            \defbibheading{bibliography}[\refname]{\clearpage\section*{\normalfont\textbf{#1}}}%
+            \defbibheading{bibliography}[\refname]{\clearpage\chapter*{\normalfont\textbf{#1}}}%
           }
         }{}
       }
@@ -182,9 +182,9 @@
       \def\def@biblatex{\@biblatexmode}%  the selected bibliography package is Biblatex
       \RequirePackage[style=apa,backend=biber]{biblatex}
       \@ifundefined{def@thesis}{%
-        \defbibheading{bibliography}[\refname]{\section*{\normalfont\textbf{#1}}}%
+        \defbibheading{bibliography}[\refname]{\chapter*{\normalfont\textbf{#1}}}%
       }{%
-        \defbibheading{bibliography}[\refname]{\clearpage\section*{\normalfont\textbf{#1}}}%
+        \defbibheading{bibliography}[\refname]{\clearpage\chapter*{\normalfont\textbf{#1}}}%
       }
       \ClassInfo{ala7}{The selected bibliography package, biblatex, has been loaded}
     }
@@ -637,7 +637,7 @@
 \RequirePackage{titlesec}
 
 \titleformat{\chapter}[display]
-  {\centering\normalfont\large\bfseries}{Chapter \thechapter}{1em}{\centering\Large}
+  {\centering\normalfont\large\bfseries}{Chapter \thechapter}{0.5em}{\centering\Large}
 
 % \renewcommand{\chapter}{\@startsection{chapter}{1}{\z@}%
 %     {\b@level@one@skip}{\e@level@one@skip}%
@@ -1055,14 +1055,32 @@
 
                   \refstepcounter{appendix}% 2002/07/20 this takes care of references too
                    % Set the `oneappendix` flag to false if there is more than one appendix section
-                   \ifnum\c@appendix>1\immediate\write\@auxout{\global\string\oneappendixfalse}\fi%
-                      \centerline{\normalfont\normalsize\textbf\appendixname\ifoneappendix\else~\textbf\theappendix\fi}%
-                      \centerline{\normalfont\normalsize\bfseries##1}\par%
-                      \setlength{\parindent}{0.5in}
-                      \makeatletter%
-                        \@afterindentfalse%
-                        \@afterheading%
-                      \makeatother%
+
+                  % Check if the `appendix` counter is greater than 1, and if so, set the `oneappendix` flag to false
+                  \ifnum\c@appendix>1
+                    \immediate\write\@auxout{\global\string\oneappendixfalse}
+                  \fi%
+
+                  % Format the chapter title to include the appendix counter (if there is more than one appendix chapter)
+                  \centerline{\normalfont\normalsize\textbf\appendixname\ifoneappendix\else~\textbf\theappendix\fi}%
+
+
+% \titleformat{\chapter}[display]
+%   {\centering\normalfont\large\bfseries}{Chapter \thechapter}{1em}{\centering\Large}
+
+                  % Format the section title and set the paragraph indentation to 0.5 inches
+                  \centerline{\normalfont\normalsize\bfseries##1}\par%
+                  \setlength{\parindent}{0.5in}
+
+                  % Use the `\makeatletter` and `\makeatother` commands to allow the use of the `@` symbol in macro names
+                  \makeatletter%
+
+                  % Control the indentation and spacing of the section title
+                  \@afterindentfalse%
+                  \@afterheading%
+
+                  % End the section definition
+                  \makeatother%
                   }%
 } % end of appendix definition
 
