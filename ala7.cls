@@ -1,11 +1,14 @@
 %%
 %% This is file `apa7.cls',
-%% generated with the docstrip utility.
+%%
+%% Modified by Leopold Zhou (@am1006) based on the original apa7.cls
 %%
 %% The original source files were:
 %%
 %% apa7.dtx  (with options: `class')
 %% ----------------------------------------------------------------------
+%%
+%% LICENSE INFORMATION
 %% 
 %% apa7 - A LaTeX class for formatting documents in compliance with the
 %% American Psychological Association's Publication Manual, 7th edition
@@ -27,7 +30,7 @@
 %% 
 %% ----------------------------------------------------------------------
 %% 
-\ProvidesClass{ala7}[2022/07/25 v2.16 APA formatting (7th edition)]
+\ProvidesClass{ala7}[2023/09/26 v1.0; adapted from 2022/07/25 v2.16 APA formatting (7th edition)]
 \NeedsTeXFormat{LaTeX2e}
 
 \DeclareOption{thesis}{%
@@ -92,10 +95,12 @@
   \def\def@nofontenc{\@nofontencmode}
 }
 
+% remove extra space around headings, etc., in thesis mode
 \DeclareOption{noextraspace}{%
   \ClassError{ala7}{Option removed: no longer uses as of version  2.15}{Spacing updated to more closely match APA 7th Edition Manual}
 }
 
+% suppress the title at the introduction (in case a different title is desired)
 \DeclareOption{donotrepeattitle}{%
   \def\def@donotrepeattitle{\@donotrepeattitlemode}
 }
@@ -136,39 +141,19 @@
 \DeclareOption{11pt}{\renewcommand\apaSeven@ptsize{11pt}}
 \DeclareOption{12pt}{\renewcommand\apaSeven@ptsize{12pt}}
 
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}}
 
 \ProcessOptions\relax
 
+% make thesis the default if no other options have been specified
 \@ifundefined{def@thesis}{%
- \@ifundefined{def@doc}{%
-  \@ifundefined{def@jou}{%
-   \def\def@jou{\@joumode}
-   \ClassInfo{ala7}{Using default mode (jou)}
-   %\def\def@thesis{\@thesismode}
-   %\def\def@doc{\@docmode}
-  }{}
- }{}
+   \def\def@thesis{\@thesismode}
+   \ClassInfo{ala7}{Using default mode (thesis)}
 }{}
 
-\@ifundefined{def@thesis}{%
-    \@ifundefined{def@jou}{%
-        \@ifundefined{def@doc}{%
-        }{% doc
-          \ifx\apaSeven@ptsize\apaSeven@noptsize
-            \LoadClass[11pt]{article} % default for doc is 11pt
-          \else
-            \LoadClass[\apaSeven@ptsize]{article}
-          \fi
-        }
-    }{% jou
-      \ifx\apaSeven@ptsize\apaSeven@noptsize
-        \LoadClass[10pt,twoside]{article} % default for jou is 10pt
-      \else
-        \LoadClass[\apaSeven@ptsize,twoside]{article}
-      \fi
-    }
-}{% thesis
+% pass the default font-size to the report class
+\@ifundefined{def@thesis}{}
+{% thesis
   \ifx\apaSeven@ptsize\apaSeven@noptsize
     \LoadClass[12pt,twoside]{report} % default for thesis is 12pt
   \else
@@ -176,6 +161,8 @@
   \fi
 }
 
+
+% determine the bibliography package, and load it if selected through the appropriate \documentclass option
 \@ifundefined{def@apacite}{%
   \@ifundefined{def@natbib}{%
     \@ifundefined{def@biblatex}{%
@@ -217,29 +204,32 @@
   \ClassInfo{ala7}{The selected bibliography package, apacite, has been loaded}
 }
 
+% load the lmodern package (needed for proper watermark font size)
 \@ifundefined{def@nolmodern}{%
   \RequirePackage{lmodern}
 }{}
 
+% load the fontenc package (needed for proper hyphenation of accented characters)
 \@ifundefined{def@nofontenc}{%
   \RequirePackage[T1]{fontenc}
 }{}
 
+% place a watermark on any pages indicated
 \@ifundefined{def@draftall}{%
   \@ifundefined{def@draftfirst}{}{%
     \RequirePackage[firstpage]{draftwatermark}
     \SetWatermarkText{DRAFT}
   }
 }{%
-  \RequirePackage{draftwatermark}
+% a draft watermark has been requested for all pages
+\RequirePackage{draftwatermark}
   \SetWatermarkText{DRAFT}
 }
 
 
+%==== Conditional compilation macros depending on mode ====
 
 \long\def\ifapamodethesis#1#2{\@ifundefined{def@thesis}{#2}{#1}}
-\long\def\ifapamodejou#1#2{\@ifundefined{def@jou}{#2}{#1}}
-\long\def\ifapamodedoc#1#2{\@ifundefined{def@doc}{#2}{#1}}
 \long\def\ifapamode#1#2#3{%
  \@ifundefined{def@thesis}{%
    \@ifundefined{def@jou}{%
@@ -248,7 +238,12 @@
   }{#1}%
 }
 
+%=================================================================
 \@ifundefined{def@thesis}{}{%
+%
+% endnotes and endfloat loaded later
+% longtable must be loaded before endfloat
+%
 \@ifundefined{long@table}{}{%
  \RequirePackage{array}
  \RequirePackage{longtable}
@@ -262,44 +257,7 @@
  \renewcommand{\familydefault}{phv}}
 }
 
-\@ifundefined{def@jou}{}{%
- \@ifundefined{def@notimes}{%
-  \newif\iftxfonts          % -- thp 2005/07/23
-  \txfontsfalse             % added checks for txfonts because they may be undesirable
-                            % for example, there are no Greek txfonts but there are times
-  \IfFileExists{txfonts.sty}{\@ifundefined{def@notxfonts}{\txfontstrue}{}}{}
-   \iftxfonts%
-    \RequirePackage{txfonts}%
-    \typeout{ala7.cls: Using txfonts}% Changed from Warning -- thp 2005/12/28
-    %%%
-    % According to Erik Meijer, txfonts causes problems if amsmath is loaded later
-    % (i.e., via \usepackage by the user); instead of providing yet another option
-    % to load amsmath by apa.cls, we adopt Erik's suggestion to undefine temporarily
-    % the offending macros -- thp 2005/12/28
-    \let\tempiint\iint\let\iint\undefined
-    \let\tempiiint\iiint\let\iiint\undefined
-    \let\tempiiiint\iiiint\let\iiiint\undefined
-    \let\tempidotsint\idotsint\let\idotsint\undefined
-    \let\tempopenbox\openbox\let\openbox\undefined
-    \AtBeginDocument{%
-     \let\iint\tempiint\let\tempiint\undefined
-     \let\iiint\tempiiint\let\tempiiint\undefined
-     \let\iiiint\tempiiiint\let\tempiiiint\undefined
-     \let\idotsint\tempidotsint\let\tempidotsint\undefined
-     \let\openbox\tempopenbox\let\tempopenbox\undefined
-    }
-    %%% end of taking care of txfonts problems
-   \else%
-    % if txfonts are not available/desirable, try pslatextimes/mathptm
-    \IfFileExists{pslatex.sty}
-     {\RequirePackage{pslatex}}
-     % if pslatex is not available, try times/mathptm
-     {\RequirePackage{times}
-      \IfFileExists{mathptm.sty}{\RequirePackage{mathptm}}{}}%
-   \fi% txfonts not available/desirable
- }{}% def@notimes
-}% def@jou
-
+% choose a paper size and set the page margins
 \@ifundefined{def@aFourPaper}{
   \RequirePackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
 }{
@@ -371,7 +329,12 @@
 
 
 
-\def\lastauthorseparator{and}
+%========= Language portability parameters ===========
+
+% Language-specific definition of strings is handled externally -- thp 2005/12/30
+% Based on handling of the same issue in apacite.sty
+
+% First define the default American English macros in case no external file is present or needed\def\lastauthorseparator{and}
 \def\acksname{Author Note}
 \def\keywordname{Keywords}
 \def\notesname{Footnotes}
@@ -393,6 +356,7 @@
  }%
 }
 
+%========== Load babel if required ===================
 
 \@ifundefined{def@babel}{}{% -- thp 2005/07/23
  \RequirePackage{babel}    % -- thp 2005/07/23, removed options 2005/12/28
@@ -667,7 +631,7 @@
 
 %========== APA Section heading & seriation, adapted from class apa6e
 
-\setcounter{secnumdepth}{3} % disable section numbering
+\setcounter{secnumdepth}{3} % set to 0 to disable section numbering
 
 \RequirePackage{titlesec}
 
@@ -745,7 +709,8 @@
     \end{tablenotes}}
 
 
-\newcounter{APAenum}
+% Refer to LaTeX book to modify, if you want, spaces before and after of
+%  \begin{...} ... \end{...} or spaces between \item-s.\newcounter{APAenum}
 \newskip\@text@par@indent
 \def\APAenumerate{\@text@par@indent\parindent\setbox0\hbox{1. }%
     \list{\arabic{APAenum}.}{\usecounter{APAenum}
@@ -770,8 +735,13 @@
     \def\makelabel##1{\hss\llap{##1}}}}
 \let\endAPAitemize=\endlist
 
+% \let\enumerate=\APAenumerate
+% \let\endenumerate=\endAPAenumerate
+% \let\itemize=\APAitemize
+% \let\enditemize=\endAPAitemize
 
 
+%===== apa.cls main declarations for title page contents =====
 
 \long\def\title#1{\long\def\@title{#1}}
 \long\def\author#1{\authorsnames{#1}}
@@ -801,7 +771,10 @@
 \def\ccoppy#1{\def\@ccoppy{#1}}
 \def\copnum#1{\def\@copnum{#1}}
 
+% Combined code from https://tex.stackexchange.com/questions/297507/how-to-apply-a-do-function-to-two-lists and 
+% https://www.dickimaw-books.com/latex/admin/html/exercises/oxfordcomma.shtml
 
+% Create etoolbox lists for multiple authors and affiliations
 \newcommand*\listauthors{}
 \newcommand*\listsuperscripts{}
 \newcommand*\listaffiliations{}
@@ -940,6 +913,7 @@
           }%
 }
 
+%==== Automatic figure size and orientation determination ====
 
 \newsavebox\gr@box
 \newlength\gr@boxwidth
@@ -965,6 +939,7 @@
 \fi
 }
 
+%==== Miscellaneous definitions
 
 \let\normal@BBAB\BBAB                        % -- thp 2005/07/23
 \let\table@BBAB\BBAA                         % -- thp 2005/07/23
@@ -1033,6 +1008,7 @@
 }
 \let\apaSevenmatrix\apaSevenvector
 
+%==== Appendix macros added by Michael Erickson 2000/07/11, revised by thp 2000/07/18
 
 \newcounter{appendix}\setcounter{appendix}{0}
 \renewcommand{\theappendix}{\@Alph\c@appendix}
@@ -1088,613 +1064,310 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 %%                     %%
-%%  MANUSCRIPT FORMAT  %%
-%%           AND STUDENT        %%
+%%    THESIS  FORMAT   %%
 %%                     %%
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 \@ifundefined{def@thesis}{}{%
 
-\def\@@spacing{1.655}
+  \def\@@spacing{1.655}
 
-\newcommand{\@doublespacing}{\linespread{1.655}}
-\@doublespacing
+  % allow a little more space between captions and floats in man mode
+  \newcommand{\@doublespacing}{\linespread{1.655}}
+  \@doublespacing
 
-\captionsetup[table]{skip=10pt}
-\captionsetup[figure]{skip=10pt}
+  \captionsetup[table]{skip=10pt}
+  \captionsetup[figure]{skip=10pt}
 
-\def\rightheader#1{\def\r@headr{\protect\MakeUppercase{#1}}}
-\def\leftheader#1{\def\r@headl{#1}}
+  \def\rightheader#1{\def\r@headr{\protect\MakeUppercase{#1}}}
+  \def\leftheader#1{\def\r@headl{#1}}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\newcommand{\shorttitle}[1]{\def\@shorttitle{#1}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\newcommand{\shorttitle}[1]{\def\@shorttitle{#1}}
 
-\raggedright
+  \raggedright
 
-\RequirePackage{fancyhdr}
-\setlength{\headheight}{15.2pt}
-\fancyhf{}
-\renewcommand{\headrulewidth}{0pt}
+  \RequirePackage{fancyhdr}
+  \setlength{\headheight}{15.2pt}
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
 
-\fancypagestyle{titlepage}{%
-    \lhead{\MakeUppercase{\@shorttitle}}%
-    \rhead{\thepage}%
-}
-\fancypagestyle{otherpage}{%
-    \lhead{\MakeUppercase{\@shorttitle}}%
-    \rhead{\thepage}%
-}
-\pagestyle{otherpage}
-
-
-%% added by BDB to make section heading non-bolface
-%% \@ifundefined{@acks}{}{\newpage\section{\acksname}\@acks}
-
-
-\let\@noendfloattab\table% BDB
-\let\@noendfloatfig\figure% BDB
-
-
-\RequirePackage[notablist,figlist,notabhead,nofighead,tablesfirst,nomarkers]{endfloat}[1995/10/11]
-
-
-\def\@gobbleuntilnext[#1]{}
-\let\eatarg\@gobbleuntilnext
-\let\ifnextchar\@ifnextchar
-
-\@ifundefined{def@floatsintext}{%  Guillaume Jourjon 19/10/10
-  \def\figure{%
-      \ifappendix
-          \vspace*{\intextsep}
-          \def\fps@figure{!hbt}%
-          \@noendfloatfig
-      \else
-           \efloat@condopen{fff}
-           \@nameuse{efloat@separator@fff}%
-           \efloat@iwrite{fff}{\string\begin{figure*}[hbt]}%
-           \global\def\@figure@written{\relax}% Set a flag that there is at least one figure -- thp 20010705
-      %% should be a global declaration to be "visible" at end document
-           \ifnextchar[{\gobbleuntilnext[}{}
-           \efloat@iwrite{fff}{\string\ifnextchar[{\string\eatarg}{}}
-          \def\@currenvir{efloat@float}%
-          \begingroup%
-          \let\do\ef@makeinnocent \dospecials%
-          \ef@makeinnocent\^^L% and whatever other special cases
-          \endlinechar`\^^M \catcode`\^^M=12 \ef@xfigure%
-      \fi%
-  }%
-
-  \def\table{%
-      \ifappendix
-          \vspace*{\intextsep}
-          \def\fps@table{!hbt}
-          \@noendfloattab
-      \else
-          \efloat@condopen{ttt}
-          \@nameuse{efloat@separator@ttt}%
-          \efloat@iwrite{ttt}{\string\begin{table*}[hbt]}%
-          \ifnextchar[{\gobbleuntilnext[}{}
-          \@ifundefined{hrm}{}{%
-          \efloat@iwrite{ttt}{\string\sf}}%
-          \efloat@iwrite{ttt}{\string\ifnextchar[{\string\eatarg}{}} % bj
-          \def\@currenvir{efloat@float}%
-          \begingroup
-          \let\do\ef@makeinnocent \dospecials
-          \ef@makeinnocent\^^L% and whatever other special cases
-          \endlinechar`\^^M \catcode`\^^M=12 \ef@xtable%
-      \fi
-  }%
-
-  \RequirePackage{etoolbox}
-  \AtEndPreamble{%
-    \@ifpackageloaded{rotating}{%
-      \DeclareDelayedFloatFlavor{sidewaystable}{table}
-      \DeclareDelayedFloatFlavor{sidewaysfigure}{figure}
-      }{}%
-  }%
-
-}{%
-  \RequirePackage{float}
-  \floatplacement{figure}{htb}
-  \def\figure{\@float{figure}}
-  \def\endfigure{\end@float}
-
-  \floatplacement{table}{htb}
-  \def\table{\@float{table}}
-  \def\endtable{\end@float}
-}
-
-%%%%%%%%%%%%%%\long\def\@@contentsline#1#2#3{ #2 }
-%%%%%%%%%%%%%%\long\def\numberline#1#2{\noindent{\em\figurename\ #1.\/} #2\vspace{0.5\baselineskip}\par}
-%%%%%%%%%%%%%%\long\def\@@caption{\refstepcounter\@captype \@dblarg{\@@@caption\@captype}}
-%%%%%%%%%%%%%%\long\def\@@@caption#1[#2]#3{\addcontentsline{\csname
-%%%%%%%%%%%%%%  ext@#1\endcsname}{#1}{\protect\numberline{\csname
-%%%%%%%%%%%%%%  the#1\endcsname}{\ignorespaces #2}}}
-
-
-\def\processfigures{%
- \expandafter\ifnum \csname @ef@fffopen\endcsname>0
-  \immediate\closeout\efloat@postfff \ef@setct{fff}{0}
-  \clearpage
-  \if@figlist
-   \@ifundefined{@figure@written}{}{%
-    {\normalsize\@ifundefined{hrm}{}{\sf}%
-    }
-   }
-  \fi
-  \@ifundefined{fig@num}{%
-   \pagestyle{otherpage}
-  }{%
-  \setcounter{page}{1}
-   \def\@oddhead{\rightmark}                                    % changed by Michael Erickson
-   \markright{\hfill \s@title, \figurename\ \protect\thefigure} % to include appendix numbering
-                                                                % remove rm - thp 020227
+  \fancypagestyle{titlepage}{%
+      \lhead{\MakeUppercase{\@shorttitle}}%
+      \rhead{\thepage}%
   }
-  \def\baselinestretch{\@@spacing}\normalsize\@ifundefined{hrm}{}{\sf}
-  \processfigures@hook \@input{\jobname.fff}
- \fi}
-
-\def\processtables{%
-  \expandafter\ifnum \csname @ef@tttopen\endcsname>0
-  \immediate\closeout\efloat@postttt \ef@setct{ttt}{0}
-  \clearpage
-  \if@tabhead
-      \section*{\tablesection}
-      \suppressfloats[t]
-  \fi
-  \def\baselinestretch{\@@spacing}
-  \processtables@hook \@ifundefined{hrm}{}{\sf}%
-  \tiny\normalsize%
-  \let\BBAB\table@BBAB%  -- thp 2005/07/23
-  \@input{\jobname.ttt}%
-  \let\BBAB\normal@BBAB% -- thp 2005/07/23
- \fi}
-
-
-\captionsetup{justification=raggedright}
-
-
-\def\maketitle{
-\@ifundefined{hrm}{}{\hrm}
- \check@author
-
-  \begin{center}
-
-
-  \vspace*{4\baselineskip}
-  \textbf\@title%
-  \ifapamodethesis{%
-    \vspace{\baselineskip}\\
-  }{%
-    \vspace{\baselineskip}\\
+  \fancypagestyle{otherpage}{%
+      \lhead{\MakeUppercase{\@shorttitle}}%
+      \rhead{\thepage}%
   }
-\@ifundefined{def@stu}{ %Professional manuscript
-  \@ifundefined{apaSeven@maskauthoridentity}{%  BDB
+  \pagestyle{otherpage}
 
-      \displayauthors \\
-      \displayaffiliations
+  %========== Alterations to endnotes ===================
 
-      \@ifundefined{@note}
-       {\vspace*{\baselineskip} }
-       {\@note}
+  %% added by BDB to make section heading non-bolface
+  %% \@ifundefined{@acks}{}{\newpage\section{\acksname}\@acks}
 
-  }{%  mask author identity -- show nothing in the author or author note space
-  }
+  %========= Alterations to endfloat ====================
 
-  \end{center}
+  % prepare to bypass endfloat for any tables or figures in appendices
+  \let\@noendfloattab\table% BDB
+  \let\@noendfloatfig\figure% BDB
 
-  \@ifundefined{apaSeven@maskauthoridentity}{
-      \@ifundefined{@acks}
-       {}
-       {%
-         \vfill%
-        \section*{\normalfont\normalsize\textbf\acksname}
-         \raggedright
-         \setlength{\parindent}{0.5in}
-         \indent\@acks\par%
-       }
-  }{%  mask author identity -- show nothing in the author or author note space
-  }}{% Student Manuscript
-    \@ifundefined{apaSeven@maskauthoridentity}{%  BDB
-      \displayauthors \\
 
-      \displayaffiliations
-    }{%  mask author identity -- show nothing in the author or affiliations space
-    }
-      \@course \\
-      \@professor \\
-      \@duedate \\
+  \RequirePackage[notablist,figlist,notabhead,nofighead,tablesfirst,nomarkers]{endfloat}[1995/10/11]
 
-    \@ifundefined{apaSeven@maskauthoridentity}{%  BDB
-      \@ifundefined{@note}
-       {\vspace*{\baselineskip} }
-       {\@note}
-    }{%  mask author identity -- show nothing in the note space
-    }
 
-        \end{center}
+  \def\@gobbleuntilnext[#1]{}
+  \let\eatarg\@gobbleuntilnext
+  \let\ifnextchar\@ifnextchar
 
-       \@ifundefined{@acks}
-       {}
-       {%
-         \@ifundefined{apaSeven@maskauthoridentity}{%  BDB
-           \vfill%
-           \section*{\normalfont\normalsize\textbf\acksname}
-           \raggedright
-           \setlength{\parindent}{0.5in}
-           \indent\@acks\par%
-         }{%  mask author identity -- show nothing in the author note space
-         }
-       }
-
-  }
-  \newpage
-  %BDB\hyphenpenalty 10000
-  \fussy
-  \@ifundefined{@abstract}{}{%
-    \section*{\normalfont\normalsize\textbf\abstractname}% BDB
-    \noindent\@abstract\par% BDB
-    \@ifundefined{@keywords}{}{%
-      \setlength{\parindent}{0.5in}% BDB
-      \indent\textit{\keywordname:} \@keywords%
+  \@ifundefined{def@floatsintext}{%  Guillaume Jourjon 19/10/10
+    \def\figure{%
+        \ifappendix
+            \vspace*{\intextsep}
+            \def\fps@figure{!hbt}%
+            \@noendfloatfig
+        \else
+            \efloat@condopen{fff}
+            \@nameuse{efloat@separator@fff}%
+            \efloat@iwrite{fff}{\string\begin{figure*}[hbt]}%
+            \global\def\@figure@written{\relax}% Set a flag that there is at least one figure -- thp 20010705
+        %% should be a global declaration to be "visible" at end document
+            \ifnextchar[{\gobbleuntilnext[}{}
+            \efloat@iwrite{fff}{\string\ifnextchar[{\string\eatarg}{}}
+            \def\@currenvir{efloat@float}%
+            \begingroup%
+            \let\do\ef@makeinnocent \dospecials%
+            \ef@makeinnocent\^^L% and whatever other special cases
+            \endlinechar`\^^M \catcode`\^^M=12 \ef@xfigure%
+        \fi%
     }%
-    \newpage
+
+    \def\table{%
+        \ifappendix
+            \vspace*{\intextsep}
+            \def\fps@table{!hbt}
+            \@noendfloattab
+        \else
+            \efloat@condopen{ttt}
+            \@nameuse{efloat@separator@ttt}%
+            \efloat@iwrite{ttt}{\string\begin{table*}[hbt]}%
+            \ifnextchar[{\gobbleuntilnext[}{}
+            \@ifundefined{hrm}{}{%
+            \efloat@iwrite{ttt}{\string\sf}}%
+            \efloat@iwrite{ttt}{\string\ifnextchar[{\string\eatarg}{}} % bj
+            \def\@currenvir{efloat@float}%
+            \begingroup
+            \let\do\ef@makeinnocent \dospecials
+            \ef@makeinnocent\^^L% and whatever other special cases
+            \endlinechar`\^^M \catcode`\^^M=12 \ef@xtable%
+        \fi
+    }%
+
+  % for rotated tables, per Ulrike Fischer:  http://tex.stackexchange.com/a/79843
+  \RequirePackage{etoolbox}
+    \AtEndPreamble{%
+      \@ifpackageloaded{rotating}{%
+        \DeclareDelayedFloatFlavor{sidewaystable}{table}
+        \DeclareDelayedFloatFlavor{sidewaysfigure}{figure}
+        }{}%
+    }%
+
+  }{%
+    \RequirePackage{float}
+    \floatplacement{figure}{htb}
+    \def\figure{\@float{figure}}
+    \def\endfigure{\end@float}
+
+    \floatplacement{table}{htb}
+    \def\table{\@float{table}}
+    \def\endtable{\end@float}
   }
 
-  \@ifundefined{def@donotrepeattitle}{
-    \section*{\protect\normalfont\textbf{\@title}}
-  }{}%
-  \raggedright%
-  \setlength{\parindent}{0.5in}%
-}
-
-\thispagestyle{titlepage}
+  %%%%%%%%%%%%%%\long\def\@@contentsline#1#2#3{ #2 }
+  %%%%%%%%%%%%%%\long\def\numberline#1#2{\noindent{\em\figurename\ #1.\/} #2\vspace{0.5\baselineskip}\par}
+  %%%%%%%%%%%%%%\long\def\@@caption{\refstepcounter\@captype \@dblarg{\@@@caption\@captype}}
+  %%%%%%%%%%%%%%\long\def\@@@caption#1[#2]#3{\addcontentsline{\csname
+  %%%%%%%%%%%%%%  ext@#1\endcsname}{#1}{\protect\numberline{\csname
+  %%%%%%%%%%%%%%  the#1\endcsname}{\ignorespaces #2}}}
 
 
-\setlength{\footnotesep}{16pt}
+  \def\processfigures{%
+  \expandafter\ifnum \csname @ef@fffopen\endcsname>0
+    \immediate\closeout\efloat@postfff \ef@setct{fff}{0}
+    \clearpage
+    \if@figlist
+    \@ifundefined{@figure@written}{}{%
+      {\normalsize\@ifundefined{hrm}{}{\sf}%
+      }
+    }
+    \fi
+    \@ifundefined{fig@num}{%
+    \pagestyle{otherpage}
+    }{%
+    \setcounter{page}{1}
+    \def\@oddhead{\rightmark}                                    % changed by Michael Erickson
+    \markright{\hfill \s@title, \figurename\ \protect\thefigure} % to include appendix numbering
+                                                                  % remove rm - thp 020227
+    }
+    \def\baselinestretch{\@@spacing}\normalsize\@ifundefined{hrm}{}{\sf}
+    \processfigures@hook \@input{\jobname.fff}
+  \fi}
 
-\renewcommand\@makefntext[1]{\raggedright\textsuperscript{\@thefnmark}~#1}
+  \def\processtables{%
+    \expandafter\ifnum \csname @ef@tttopen\endcsname>0
+    \immediate\closeout\efloat@postttt \ef@setct{ttt}{0}
+    \clearpage
+    \if@tabhead
+        \section*{\tablesection}
+        \suppressfloats[t]
+    \fi
+    \def\baselinestretch{\@@spacing}
+    \processtables@hook \@ifundefined{hrm}{}{\sf}%
+    \tiny\normalsize%
+    \let\BBAB\table@BBAB%  -- thp 2005/07/23
+    \@input{\jobname.ttt}%
+    \let\BBAB\normal@BBAB% -- thp 2005/07/23
+  \fi}
+
+  %========== Alterations to captions (BDB) ===================
+
+  \captionsetup{justification=raggedright}
+
+  %========= Maketitle, margins, lengths, etc. ==========
+
+  \def\maketitle{
+  \@ifundefined{hrm}{}{\hrm}
+  \check@author
+
+    \begin{center}
+
+      \vspace*{4\baselineskip}
+      \textbf\@title%
+      \ifapamodethesis{%
+        \vspace{\baselineskip}\\
+      }{%
+        \vspace{\baselineskip}\\
+      }
+
+      { %Professional manuscript
+        \@ifundefined{apaSeven@maskauthoridentity}{%  BDB
+          \displayauthors \\
+          \displayaffiliations
+          \@ifundefined{@note}
+          {\vspace*{\baselineskip} }
+          {\@note}
+        }{%  mask author identity -- show nothing in the author or author note space
+      }
+
+    \end{center}
+
+    \@ifundefined{apaSeven@maskauthoridentity}{
+        \@ifundefined{@acks}
+        {}
+        {%
+          \vfill%
+          \section*{\normalfont\normalsize\textbf\acksname}
+          \raggedright
+          \setlength{\parindent}{0.5in}
+          \indent\@acks\par%
+        }
+    }{%  mask author identity -- show nothing in the author or author note space
+    }}{% Student Manuscript
+      \@ifundefined{apaSeven@maskauthoridentity}{%  BDB
+        \displayauthors \\
+
+        \displayaffiliations
+      }{%  mask author identity -- show nothing in the author or affiliations space
+      }
+        \@course \\
+        \@professor \\
+        \@duedate \\
+
+      \@ifundefined{apaSeven@maskauthoridentity}{%  BDB
+        \@ifundefined{@note}
+        {\vspace*{\baselineskip} }
+        {\@note}
+      }{%  mask author identity -- show nothing in the note space
+      }
+
+          \end{center}
+
+        \@ifundefined{@acks}
+        {}
+        {%
+          \@ifundefined{apaSeven@maskauthoridentity}{%  BDB
+            \vfill%
+            \section*{\normalfont\normalsize\textbf\acksname}
+            \raggedright
+            \setlength{\parindent}{0.5in}
+            \indent\@acks\par%
+          }{%  mask author identity -- show nothing in the author note space
+          }
+        }
+
+    }
+    \newpage
+    %BDB\hyphenpenalty 10000
+    \fussy
+    \@ifundefined{@abstract}{}{%
+      \section*{\normalfont\normalsize\textbf\abstractname}% BDB
+      \noindent\@abstract\par% BDB
+      \@ifundefined{@keywords}{}{%
+        \setlength{\parindent}{0.5in}% BDB
+        \indent\textit{\keywordname:} \@keywords%
+      }%
+      \newpage
+    }
+
+    \@ifundefined{def@donotrepeattitle}{
+      \section*{\protect\normalfont\textbf{\@title}}
+    }{}%
+    \raggedright%
+    \setlength{\parindent}{0.5in}%
+  }
+
+  \thispagestyle{titlepage}
 
 
-\newcommand{\footmark}[1]{${}^{\mbox{\normalsize #1}}$}
+  \setlength{\footnotesep}{16pt}
 
-%% added second set of braces around \em  to get citations in man mode -- tp 17/7/2000
-%% then removed them again because they were cancelling application of em to the caption
+  \renewcommand\@makefntext[1]{\raggedright\textsuperscript{\@thefnmark}~#1}
 
-\setcounter{topnumber}{1}
-\def\topfraction{.7}
-\setcounter{bottomnumber}{1}
-\def\bottomfraction{.6}
-\setcounter{totalnumber}{1}
-\def\textfraction{0}
-\def\floatpagefraction{.7}
-\setcounter{dbltopnumber}{1}
-\def\dbltopfraction{.7}
-\def\dblfloatpagefraction{.7}
-\def\dbltextfloatsep{\textfloatsep}
 
-\fussy
+  \newcommand{\footmark}[1]{${}^{\mbox{\normalsize #1}}$}
 
-\@ifundefined{def@nosf}{%
-\def\helvetica{%
-\ClassWarning{ala7}{ignored \string\helvetica\space (use helv option)}
-}}{\def\helvetica{\relax}}
+  %% added second set of braces around \em  to get citations in man mode -- tp 17/7/2000
+  %% then removed them again because they were cancelling application of em to the caption
+
+  \setcounter{topnumber}{1}
+  \def\topfraction{.7}
+  \setcounter{bottomnumber}{1}
+  \def\bottomfraction{.6}
+  \setcounter{totalnumber}{1}
+  \def\textfraction{0}
+  \def\floatpagefraction{.7}
+  \setcounter{dbltopnumber}{1}
+  \def\dbltopfraction{.7}
+  \def\dblfloatpagefraction{.7}
+  \def\dbltextfloatsep{\textfloatsep}
+
+  \fussy
+
+  \@ifundefined{def@nosf}{%
+  \def\helvetica{%
+  \ClassWarning{ala7}{ignored \string\helvetica\space (use helv option)}
+  }}{\def\helvetica{\relax}}
 
 
 
 }% end of thesis mode (manuscript format)
 
-%%%%%%%%%%%%%%%%%%%%
-%%                %%
-%% JOURNAL FORMAT %%
-%%                %%
-%%%%%%%%%%%%%%%%%%%%
 
-\@ifundefined{def@jou}{}{%
+%---------- end of mode specific definitions -----------
 
-\RequirePackage{fancyhdr}
-
-\renewcommand{\addORCIDlink}[2]{\href{https://orcid.org/#2}{{\mbox{\scalerel*{
-\begin{tikzpicture}[yscale=-1,transform shape]
-\pic{orcidlogo};
-\end{tikzpicture}
-}{|}}} #1}}
-
-
-\IfFileExists{flushend.sty}{\RequirePackage{flushend}}{}
-
-
-\IfFileExists{ftnright.sty}{
- \let\savefootnoterule\footnoterule
- \let\save@makefntext\@makefntext
- \RequirePackage{ftnright}
- \let\footnoterule\savefootnoterule
- \let\@makefntext\save@makefntext
-}{}
-
-
-\def\rightheader#1{\def\r@headr{\protect\MakeUppercase{\protect\scriptsize #1}}}
-\def\leftheader#1{\def\r@headl{\protect\MakeUppercase{\protect\scriptsize #1}}}
-\def\r@headr{\protect\MakeUppercase{\protect\scriptsize\@shorttitle}}% BDB
-%%%%%%%%%%%%%%%%%%%%%%%\def\shorttitle#1{\def\r@headr{\protect\MakeUppercase{\protect\scriptsize #1}}}% BDB
-
-\def\maketitle{
- \check@author
- \@ifundefined{r@headr}{\def\r@headr{\protect\MakeUppercase{\protect\scriptsize\@title}}}{}
- \@ifundefined{r@headl}{\def\r@headl{ADD \\LEFTHEADER COMMAND}}{}
-
-\twocolumn[  % anything appearing within the brackets is set in one-column mode
-  \vspace{0.03in}
-  \begin{center}
-  {\LARGE \@title}\\
-  \vspace{-0.05in}
-
-  \@ifundefined{apaSeven@maskauthoridentity}{%  BDB
-
-\parbox[t]{\textwidth}{\begin{center}{\large \displayauthors\vspace{0in}}%
-
-{\displayaffiliations\vspace{0.05in}}\end{center}}
-
-      \@ifundefined{@note}
-       {\vspace{0.07in}}
-       {\vspace{0.07in}\\ {\large\@note\vspace{0.07in}}}
-
-  }{%  mask author identity -- show nothing in the author or author space
-    \vspace{0.32in}
-  }
-
-  \@ifundefined{@abstract}
-  {\par }
-  {\par \parbox{4.6875in}
-   {\small \noindent \@abstract
-     \@ifundefined{@keywords}{}{%
-      \par\vspace{0.12in}\raggedright\textit{\keywordname:} \@keywords%
-     }%
-   }
-   \vspace{0.24in}%
-  }
-  \end{center}
- ] % end of \twocolumn[]
-
- \renewcommand{\headrulewidth}{0pt}%
-
- \pagenumbering{arabic}
- \@ifundefined{@journal}{\thispagestyle{empty}}{%
-  \@ifundefined{@vvolume}{\def\@vvolume{\strut}}{}%
-  \@ifundefined{@copnum}{\def\@copnum{\strut}}{}%
-  \@ifundefined{@ccoppy}{\def\@ccoppy{\strut}}{}%
-  \fancypagestyle{pageone}{%
-    \fancyhf{}%
-    \fancyhead[L]{\stiny{\@journal}\vspace{-0.15\baselineskip}\\
-                 \stiny{\@vvolume}}%
-    \fancyhead[R]{\stiny{\@ccoppy}\vspace{-0.15\baselineskip}\\
-                 \stiny{\@copnum}}%
-  }
-  \thispagestyle{pageone}
- }
-
-  \@ifundefined{apaSeven@maskauthoridentity}{%  BDB
-     \@ifundefined{@acks}
-      {}
-      {\begin{figure}[b]
-       \parbox{\columnwidth}{\setlength{\parindent}{0.18in}
-       \noindent\makebox[\columnwidth]{\vrule height0.125pt width\columnwidth}\vspace*{0.05in}\par
-       {\footnotesize\hspace{-0.04in}\@acks\par}}
-       \end{figure}}
-  }{%  mask author identity -- show nothing in the author note space
-  }
-
- \@ifundefined{no@tab}{\let\tabular\apaSeventabular}{}
- %\noindent
-}
-
-\newcommand\stiny{\@setfontsize\stiny\@vipt\@viipt}
-
-\setlength{\footnotesep}{0.2813in}
-\setlength{\topmargin}{-0.275in}
-\addtolength{\headheight}{0.02in}
-\addtolength{\headsep}{-0.156in}
-\setlength{\oddsidemargin}{-0.25in}
-\setlength{\evensidemargin}{-0.25in}
-\setlength{\textwidth}{6.94in}
-\setlength{\textheight}{8.9in}
-\setlength{\columnwidth}{8.5cm}
-\setlength{\columnsep}{0.25in}
-\setlength{\parindent}{0.15625in}
-%%\setlength{\parskip}{0in}
-\setlength{\textfloatsep}{0.35in}
-
-\setcounter{secnumdepth}{0}
-
- \fancypagestyle{journalbase}{%
-  \fancyhf{}%
-  \fancyhead[LE]{\thepage}%
-  \fancyhead[RO]{\thepage}%
-  \fancyhead[CO]{\r@headr}%
-  \def\sectionmark##1{}
-  \def\subsectionmark##1{}
-}
-
-\@ifundefined{apaSeven@maskauthoridentity}{%  BDB
-    \fancypagestyle{journal}[journalbase]{%
-      \fancyhead[CE]{\r@headl}%
-    }
-}{%  mask author identity -- show the short title for both the left and right headers
-    \fancypagestyle{journal}[journalbase]{%
-      \fancyhead[CE]{\r@headr}%
-    }
- }
- \pagestyle{journal}
-
-
-\setcounter{topnumber}{2}
-\def\topfraction{.85}
-\setcounter{bottomnumber}{2}
-\def\bottomfraction{.75}
-\setcounter{totalnumber}{3}
-\def\textfraction{.10}
-\def\floatpagefraction{.85}
-\setcounter{dbltopnumber}{2}
-\def\dbltopfraction{.85}
-\def\dblfloatpagefraction{.85}
-\def\dbltextfloatsep{0.8\textfloatsep}
-\let\footnotesize=\small
-
-\def\helvetica{\relax}
-
-\doublehyphendemerits5000
-\hfuzz0pt
-\tolerance=9999
-\pretolerance=-1
-\emergencystretch=25pt
-\hbadness=30000
-\hyphenpenalty=100
-
-\@ifundefined{def@apacite}{}{% -- Philip Kime 2008/12/03
-  % Removed some bibliography redefinitions as per the instructions of Erik Meijer
-  \bibleftmargin=1.2em        % left these in because the default is too big
-  \bibindent=-\bibleftmargin  % and this is apparently not refefined each time
-  \renewcommand{\bibliographytypesize}{\footnotesize}}
-\@ifundefined{def@natbib}{}{% -- Philip Kime 2008/12/03
-  % Removed some bibliography redefinitions as per the instructions of Erik Meijer
-  \bibleftmargin=1.2em        % left these in because the default is too big
-  \bibindent=-\bibleftmargin  % and this is apparently not refefined each time
-  \renewcommand{\bibliographytypesize}{\footnotesize}}
-
-
-}% end of jou mode (journal format)
-
-%%%%%%%%%%%%%%%%%%%%
-%%                %%
-%% REGULAR FORMAT %%
-%%                %%
-%%%%%%%%%%%%%%%%%%%%
-
-\@ifundefined{def@doc}{}{%
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\renewcommand{\shorttitle}[1]{\def\@shorttitle{#1}}
-
-\def\leftheader#1{\def\r@headl{#1}}
-
-\RequirePackage{fancyhdr}
-\setlength{\headheight}{15.2pt}
-\fancyhf{}
-\renewcommand{\headrulewidth}{0pt}
-
-\fancypagestyle{otherpage}{%
-    \lhead{\MakeUppercase{\@shorttitle}}%
-    \rhead{\thepage}%
-}
-\pagestyle{otherpage}
-
-\def\maketitle{
- \global\@topnum\z@  % to prevent tables before the title   %% Erik Meijer, 2006/01/03
- \@ifundefined{@acks}{% if there acknowledgements they make up a "float" on the 1st page
- \global\@botnum\z@}{% to prevent tables on the first page  %% Erik Meijer, 2006/01/03
- \global\@botnum\@ne}% to prevent tables below the footnote -- thp 2006/01/10
- \check@author
- \@ifundefined{r@headr}{\typeout{Using title for running head}
-                        \def\r@headr{\protect\MakeUppercase{\@title}}
-                        \markright{\rm \@title \protect\\ \thepage}}{}
- \@ifundefined{r@headl}{\let\r@headl\r@headr}{}
- \@ifundefined{s@title}{\let\s@title\r@headr}{}
-  \sloppy
-  \setlength{\parindent}{0.5in}
-  \begin{center}
-   \@ifundefined{@journal}{}{%
-    \@ifundefined{@vvolume}{\def\@vvolume{}}{}%
-    \@ifundefined{@copnum}{\def\@copnum{}}{}%
-    \@ifundefined{@ccoppy}{\def\@ccoppy{}}{}%
-    {\scriptsize{\@journal}}\hspace{\fill}{\scriptsize{\@ccoppy}}\vspace{-0.3\baselineskip}\\
-    {\scriptsize{\@vvolume}}\hspace{\fill}{\scriptsize{\@copnum}}\vspace{0.1in}\\
-   }
-  \vspace*{0.3in}
-
-  {\LARGE \@title}\\
-
-  \vspace{0.3in}
-  \@ifundefined{apaSeven@maskauthoridentity}{%  BDB
-
-      {\Large \displayauthors} \\
-
-      \displayaffiliations \vspace{0.1in}
-
-  }{%  mask author identity -- show nothing in the author note space
-  }
-
-  \@ifundefined{@abstract}{}{%
-   {\abstractname}\vspace{0.1in}% BDB
-
-   \parbox{5in}{\@abstract%
-     \@ifundefined{@keywords}{}{%
-       \par\vspace{0.12in}\textit{\keywordname:} \@keywords%
-     }%
-   }\vspace{0.25in}%
-  }
-  \end{center}
- \pagenumbering{arabic}
- \thispagestyle{empty}
-
-  \@ifundefined{apaSeven@maskauthoridentity}{%  BDB
-
-     \@ifundefined{@acks}
-      {}
-      {\begin{figure}[b]
-       \parbox{\textwidth}{ \setlength{\parindent}{0.2in}
-       \noindent \makebox[\linewidth]{\vrule height0.125pt width\linewidth}
-
-       \vspace*{0.05in}
-       {\footnotesize
-       \indent \@acks
-
-       }}
-       \end{figure}}
-
-  }{%  mask author identity -- show nothing in the author note space
-  }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- \markboth{\hfill \r@headl \hfill}{\hfill \r@headr \hfill}
- \let\tabular\apaSeven@doc@tabular% -- thp 2006/01/02
- \let\endtabular\apaSeven@doc@endtabular% -- thp 2006/01/03
-}
-
-\setlength{\topmargin}{-0.25in}
-\setlength{\oddsidemargin}{0.25in}
-\setlength{\evensidemargin}{0.25in}
-\setlength{\textwidth}{6in}
-\setlength{\textheight}{8.5in}
-\setcounter{secnumdepth}{0}
-\flushbottom
-
-\setlength{\headwidth}{\textwidth}
-
-\setcounter{topnumber}{2}
-\def\topfraction{.7}
-\setcounter{bottomnumber}{2}
-\def\bottomfraction{.6}
-\setcounter{totalnumber}{3}
-\def\textfraction{.2}
-\def\floatpagefraction{.7}
-\setcounter{dbltopnumber}{2}
-\def\dbltopfraction{.8}
-\def\dblfloatpagefraction{.8}
-\def\dbltextfloatsep{0.8\textfloatsep}
-
-\def\helvetica{\relax}
-%%\def\timesroman{\relax}%    Commented out all \timesroman -- thp 2005/07/23
-
-\@ifundefined{def@apacite}{}{% -- Philip Kime 2008/12/03
-  % Removed defs as per the instructions of Erik Meijer -- thp 2005/07/23
-  \renewcommand{\bibliographytypesize}{\small}}
-\@ifundefined{def@natbib}{}{% -- Philip Kime 2008/12/03
-  % Removed defs as per the instructions of Erik Meijer -- thp 2005/07/23
-  \renewcommand{\bibliographytypesize}{\small}}
-
-
-}% end of doc mode (regular LaTeX format)
-
-
+% =======================================================
+%       Some final definitions for all modes
+% =======================================================
 
 \let\ignore\@gobble
 
