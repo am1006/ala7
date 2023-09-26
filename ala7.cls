@@ -681,22 +681,11 @@
 
 \RequirePackage[singlelinecheck=off]{caption}
 
-\ifapamode{% thesis
-   \DeclareCaptionLabelFormat{tablelabel}{\hspace{-\parindent}\raggedright\textbf{#1 #2}}
-    \DeclareCaptionLabelFormat{figurelabel}{\hspace{-\parindent}\raggedright\textbf{#1 #2}}
-    \DeclareCaptionTextFormat{tabletext}{\hspace{-\parindent}\raggedright\textit{#1}}
-    \DeclareCaptionLabelSeparator{apalabelsep}{\\}
-}{% jou
-    \DeclareCaptionLabelFormat{tablelabel}{\hspace{-\parindent}\raggedright\textbf{#1 #2}}
-    \DeclareCaptionLabelFormat{figurelabel}{\hspace{-\parindent}\raggedright\textbf{#1 #2}}
-    \DeclareCaptionTextFormat{tabletext}{\hspace{-\parindent}\textit{#1}}
-    \DeclareCaptionLabelSeparator{apalabelsep}{\\[\baselineskip]}
-}{% doc
-    \DeclareCaptionLabelFormat{tablelabel}{\hspace{-\parindent}\raggedright\textbf{#1 #2}}
-    \DeclareCaptionLabelFormat{figurelabel}{\hspace{-\parindent}\raggedright\textbf{#1 #2}}
-    \DeclareCaptionTextFormat{tabletext}{\hspace{-\parindent}\raggedright\textit{#1}}
-    \DeclareCaptionLabelSeparator{apalabelsep}{\\[\baselineskip]}
-}
+\DeclareCaptionLabelFormat{tablelabel}{\hspace{-\parindent}\raggedright\textbf{#1 #2}}
+\DeclareCaptionLabelFormat{figurelabel}{\hspace{-\parindent}\raggedright\textbf{#1 #2}}
+\DeclareCaptionTextFormat{tabletext}{\hspace{-\parindent}\raggedright\textit{#1}}
+\DeclareCaptionLabelSeparator{apalabelsep}{\\}
+
 \captionsetup[table]{position=above,skip=0pt,labelformat=tablelabel,labelsep=apalabelsep,textformat=tabletext}
 \captionsetup[figure]{position=above,skip=0pt,labelformat=figurelabel,labelsep=apalabelsep,textfont=it}
 
