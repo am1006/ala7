@@ -1046,25 +1046,25 @@
   \apaSevenapptab
   \apaSevenappeq
   % Redefine the behavior of the `section` macro to include the appendix counter in the section title
-  \let\old@apaSeven@section=\section
-  \long\def\section##1{%
+  \let\old@apaSeven@chapter=\chapter
+  \long\def\chapter##1{%
                    \makeatletter%
                      \def\@currentlabelname{##1}%
                    \makeatother%
                    % Output all tables and figures prior to the appendix
-                   \ifapamodethesis{%
-                    \clearpage
-                    \setcounter{postfig}{0}
-                    \setcounter{posttbl}{0}
-                   }{%
-                   }%
-                    % Reset the figure, table, and equation counters to 0
-                    \setcounter{figure}{0}%
-                    \setcounter{table}{0}%
-                    \setcounter{equation}{0}%
-                    % Add the appendix counter to the section title
-                    \vskip2.5ex%
-                   \refstepcounter{appendix}% 2002/07/20 this takes care of references too
+
+                  \clearpage
+                  \setcounter{postfig}{0}
+                  \setcounter{posttbl}{0}
+
+                  % Reset the figure, table, and equation counters to 0
+                  \setcounter{figure}{0}%
+                  \setcounter{table}{0}%
+                  \setcounter{equation}{0}%
+                  % Add the appendix counter to the section title
+                  \vskip2.5ex%
+
+                  \refstepcounter{appendix}% 2002/07/20 this takes care of references too
                    % Set the `oneappendix` flag to false if there is more than one appendix section
                    \ifnum\c@appendix>1\immediate\write\@auxout{\global\string\oneappendixfalse}\fi%
                       \centerline{\normalfont\normalsize\textbf\appendixname\ifoneappendix\else~\textbf\theappendix\fi}%
