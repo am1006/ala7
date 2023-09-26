@@ -1,4 +1,4 @@
-# ALA7 - A Leopold's APA 7 for his thesis
+# ALA7 - A Leopold's APA 7 for the thesis
 
 This is a LaTeX template for a thesis written in APA 7th edition style. It is based on the [apa7](https://ctan.org/pkg/apa7) class, which is a LaTeX implementation of the APA 7th edition guidelines.
 
@@ -6,8 +6,8 @@ The original repo is [here](https://github.com/dan-weiss/apa7-latex-cls-source/b
 
 ## Todos
 
-- [ ] Fix appendix format
-- [ ] Declare only the thesis option. 
+- [x] Fix appendix format
+- [x] Declare only the thesis option. 
       I will not use it for other purposes. When it comes to publishing, I will use the `apa7` package. Everything now is modified based on the `man` option.
   - [x] Rename the `man` related stuff to `thesis`
-- [ ] 
+- [ ] Fine tuning?

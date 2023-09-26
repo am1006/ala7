@@ -1262,31 +1262,50 @@
   \captionsetup{justification=raggedright}
 
   %========= Maketitle, margins, lengths, etc. ==========
+  
+  \usepackage{datetime}                             % to be able to print month & year on title page
+  \newdateformat{monthyeardate}{\monthname[\THEMONTH] \THEYEAR}
 
   \def\maketitle{
     \@ifundefined{hrm}{}{\hrm}
     \check@author
   
     \begin{center}
-  
-      \vspace*{4\baselineskip}
-      \textbf\@title%
-      \ifapamodethesis{%
-        \vspace{\baselineskip}\\
-      }{%
-        \vspace{\baselineskip}\\
-      }
-  
 
-      \@ifundefined{apaseven@maskauthoridentity}
-      {%  bdb
-        \displayauthors \\
-        \displayaffiliations
-        \@ifundefined{@note}
-        {\vspace*{\baselineskip} }
-        {\@note}
-      }{%  mask author identity -- show nothing in the author or author note space
-      }
+      \thispagestyle{empty}
+      \vspace*{3\baselineskip}
+      %
+      {\bfseries \huge \@title}
+      %
+      %
+      \vfill
+      \textbf{\Large\AuthorName}
+      %
+      %
+  
+      \vfill
+      %
+      {\itshape A thesis submitted in partial fulfilment of the requirements for the degree of {\mdseries Bachelor of Business Administration} with Honours in Information Systems at the Australian National University.}
+      %
+      \vfill
+      \includegraphics[height=2cm]{\Logo}\\[1em]
+      {\bfseries \School}\\
+      {\mdseries \College}\\
+      {The Australian National University}\\[2em]
+      %
+      {\large\scshape \monthyeardate\today}
+
+
+      % \@ifundefined{apaseven@maskauthoridentity}
+      % {%  bdb
+      %   \displayauthors \\
+      %   \displayaffiliations
+      %   \@ifundefined{@note}
+      %   {\vspace*{\baselineskip} }
+      %   {\@note}
+      % }
+      % {%  mask author identity -- show nothing in the author or author note space
+      % }
 
     \end{center}
 
@@ -1313,7 +1332,9 @@
     {}
     {%
       \chapter*{\abstractname}% bdb
-      \noindent\@abstract\par% bdb
+      % \noindent\@abstract\par% bdb
+      \setlength{\parindent}{0.5in}
+      \@abstract\par% bdb
       
       \@ifundefined{@keywords}
       {}
