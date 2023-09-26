@@ -1308,19 +1308,28 @@
     \newpage
     %bdb\hyphenpenalty 10000
     \fussy
-    \@ifundefined{@abstract}{}{%
-      \section*{\normalfont\normalsize\textbf\abstractname}% bdb
+
+    \@ifundefined{@abstract}
+    {}
+    {%
+      \chapter*{\abstractname}% bdb
       \noindent\@abstract\par% bdb
-      \@ifundefined{@keywords}{}{%
+      
+      \@ifundefined{@keywords}
+      {}
+      {%
         \setlength{\parindent}{0.5in}% bdb
         \indent\textit{\keywordname:} \@keywords%
-      }%
-      \newpage
+      }%  
+    \newpage
     }
 
-    \@ifundefined{def@donotrepeattitle}{
+    \@ifundefined{def@donotrepeattitle}
+    {
       \section*{\protect\normalfont\textbf{\@title}}
-    }{}%
+    }
+    {}%
+
     \raggedright%
     \setlength{\parindent}{0.5in}%
   }
