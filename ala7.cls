@@ -1010,8 +1010,13 @@
 
 %==== Appendix macros added by Michael Erickson 2000/07/11, revised by thp 2000/07/18
 
+% Define a new counter called `appendix` and set its initial value to 0
 \newcounter{appendix}\setcounter{appendix}{0}
+
+% Redefine the format of the appendix counter to use uppercase letters
 \renewcommand{\theappendix}{\@Alph\c@appendix}
+
+% Define macros to redefine the format of the figure, table, and equation counters to include the appendix counter
 \def\apaSevenappfig{%
  \renewcommand\thefigure{\theappendix\@arabic\c@figure}%
  \ifapamodethesis{\renewcommand\thepostfig{\theappendix\arabic{postfig}}}{}}
@@ -1020,36 +1025,46 @@
  \ifapamodethesis{\renewcommand\theposttbl{\theappendix\arabic{posttbl}}}{}}
 \def\apaSevenappeq{%
  \renewcommand\theequation{\theappendix\@arabic\c@equation}}
+
+% Define a new flag called `oneappendix` and set it to true by default
 \newif\ifoneappendix
 \oneappendixtrue % one appendix by default
+
+% Define a new flag called `appendix` and set it to false by default
 \newif\ifappendix
 \appendixfalse
 
+% Define the behavior of the appendix section
 \def\appendix{%
-  \ifapamodethesis{\processdelayedfloats}{}%  BDB -- output all tables and figures prior to the appendix
+  % Output all tables and figures prior to the appendix
+  \ifapamodethesis{\processdelayedfloats}{}%
+  % Set the `appendix` flag to true
   \appendixtrue
+  % Redefine the format of the figure, table, and equation counters to include the appendix counter
   \apaSevenappfig
   \apaSevenapptab
   \apaSevenappeq
-  \let\old@apaSeven@section=\section % This will not work right with five levels in appendix.
-                                 % Should go into \section, not \leveltwo but would also require
-                                 % changes to section* and section[ (see \def\section above)
-                                 % Who uses five level heading appendices anyway?
+  % Redefine the behavior of the `section` macro to include the appendix counter in the section title
+  \let\old@apaSeven@section=\section
   \long\def\section##1{%
                    \makeatletter%
                      \def\@currentlabelname{##1}%
                    \makeatother%
+                   % Output all tables and figures prior to the appendix
                    \ifapamodethesis{%
                     \clearpage
                     \setcounter{postfig}{0}
                     \setcounter{posttbl}{0}
                    }{%
                    }%
+                    % Reset the figure, table, and equation counters to 0
                     \setcounter{figure}{0}%
                     \setcounter{table}{0}%
                     \setcounter{equation}{0}%
+                    % Add the appendix counter to the section title
                     \vskip2.5ex%
                    \refstepcounter{appendix}% 2002/07/20 this takes care of references too
+                   % Set the `oneappendix` flag to false if there is more than one appendix section
                    \ifnum\c@appendix>1\immediate\write\@auxout{\global\string\oneappendixfalse}\fi%
                       \centerline{\normalfont\normalsize\textbf\appendixname\ifoneappendix\else~\textbf\theappendix\fi}%
                       \centerline{\normalfont\normalsize\bfseries##1}\par%
