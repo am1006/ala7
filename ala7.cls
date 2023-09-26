@@ -1062,14 +1062,19 @@
                   \fi%
 
                   % Format the chapter title to include the appendix counter (if there is more than one appendix chapter)
-                  \centerline{\normalfont\normalsize\textbf\appendixname\ifoneappendix\else~\textbf\theappendix\fi}%
+                  \centerline{
+                    \normalfont\large\textbf\appendixname\ifoneappendix
+                    \else~\large\textbf\theappendix\fi
+                  }%
+
+                  \vskip0.5em
 
 
 % \titleformat{\chapter}[display]
 %   {\centering\normalfont\large\bfseries}{Chapter \thechapter}{1em}{\centering\Large}
 
                   % Format the section title and set the paragraph indentation to 0.5 inches
-                  \centerline{\normalfont\normalsize\bfseries##1}\par%
+                  \centerline{\normalfont\Large\bfseries##1}\par%
                   \setlength{\parindent}{0.5in}
 
                   % Use the `\makeatletter` and `\makeatother` commands to allow the use of the `@` symbol in macro names
