@@ -30,13 +30,13 @@
 \ProvidesClass{ala7}[2022/07/25 v2.16 APA formatting (7th edition)]
 \NeedsTeXFormat{LaTeX2e}
 
-\DeclareOption{man}{%
-  \def\def@man{\@manmode}
+\DeclareOption{thesis}{%
+  \def\def@thesis{\@thesismode}
 }
 
 \DeclareOption{stu}{%
   \def\def@stu{\@stumode}
-  \def\def@man{\@manmode}
+  \def\def@thesis{\@thesismode}
 }
 
 \DeclareOption{jou}{%
@@ -60,11 +60,11 @@
 }
 
 \DeclareOption{nosf}{%
-  \@ifundefined{def@man}{}{\def\def@nosf{\@nosf}}
+  \@ifundefined{def@thesis}{}{\def\def@nosf{\@nosf}}
 }
 
 \DeclareOption{fignum}{%
-  \@ifundefined{def@man}{}{\def\fig@num{\relax}}
+  \@ifundefined{def@thesis}{}{\def\fig@num{\relax}}
 }
 
 
@@ -73,11 +73,11 @@
 }
 
 \DeclareOption{tt}{%
-  \@ifundefined{def@man}{}{\def\tt@family{\relax}}
+  \@ifundefined{def@thesis}{}{\def\tt@family{\relax}}
 }
 
 \DeclareOption{helv}{%
-  \@ifundefined{def@man}{}{\def\helv@family{\relax}}
+  \@ifundefined{def@thesis}{}{\def\helv@family{\relax}}
 }
 
 \DeclareOption{notab}{\def\no@tab{\relax}}
@@ -140,18 +140,18 @@
 
 \ProcessOptions\relax
 
-\@ifundefined{def@man}{%
+\@ifundefined{def@thesis}{%
  \@ifundefined{def@doc}{%
   \@ifundefined{def@jou}{%
    \def\def@jou{\@joumode}
    \ClassInfo{ala7}{Using default mode (jou)}
-   %\def\def@man{\@manmode}
+   %\def\def@thesis{\@thesismode}
    %\def\def@doc{\@docmode}
   }{}
  }{}
 }{}
 
-\@ifundefined{def@man}{%
+\@ifundefined{def@thesis}{%
     \@ifundefined{def@jou}{%
         \@ifundefined{def@doc}{%
         }{% doc
@@ -168,9 +168,9 @@
         \LoadClass[\apaSeven@ptsize,twoside]{article}
       \fi
     }
-}{% man
+}{% thesis
   \ifx\apaSeven@ptsize\apaSeven@noptsize
-    \LoadClass[12pt,twoside]{report} % default for man is 12pt
+    \LoadClass[12pt,twoside]{report} % default for thesis is 12pt
   \else
     \LoadClass[\apaSeven@ptsize]{report}
   \fi
@@ -183,7 +183,7 @@
       \RequirePackage{etoolbox}
       \AtEndPreamble{%
         \@ifpackageloaded{biblatex}{%  the user has loaded biblatex
-          \@ifundefined{def@man}{%
+          \@ifundefined{def@thesis}{%
             \defbibheading{bibliography}[\refname]{\section*{\normalfont\textbf{#1}}}%
           }{%
             \defbibheading{bibliography}[\refname]{\clearpage\section*{\normalfont\textbf{#1}}}%
@@ -194,7 +194,7 @@
     }{%
       \def\def@biblatex{\@biblatexmode}%  the selected bibliography package is Biblatex
       \RequirePackage[style=apa,backend=biber]{biblatex}
-      \@ifundefined{def@man}{%
+      \@ifundefined{def@thesis}{%
         \defbibheading{bibliography}[\refname]{\section*{\normalfont\textbf{#1}}}%
       }{%
         \defbibheading{bibliography}[\refname]{\clearpage\section*{\normalfont\textbf{#1}}}%
@@ -203,7 +203,7 @@
     }
   }{%
     \def\def@natbib{\@natbibmode}%  the selected bibliography package is natbib (with apacite)
-    \@ifundefined{def@man}{%         -- thp 2005/07/23
+    \@ifundefined{def@thesis}{%         -- thp 2005/07/23
       \RequirePackage[natbibapa]{apacite}[2012/02/25]}
       {\RequirePackage[natbibapa,bibnewpage]{apacite}[2012/02/25]}
     \ClassInfo{ala7}{The selected bibliography package, apacite and
@@ -211,7 +211,7 @@
   }
 }{%
   \def\def@apacite{\@apacitemode}%  the selected bibliography package is apacite
-  \@ifundefined{def@man}{%         -- thp 2005/07/23
+  \@ifundefined{def@thesis}{%         -- thp 2005/07/23
     \RequirePackage{apacite}[2005/06/08]}
     {\RequirePackage[bibnewpage]{apacite}[2005/06/08]}
   \ClassInfo{ala7}{The selected bibliography package, apacite, has been loaded}
@@ -237,18 +237,18 @@
 
 
 
-\long\def\ifapamodeman#1#2{\@ifundefined{def@man}{#2}{#1}}
+\long\def\ifapamodethesis#1#2{\@ifundefined{def@thesis}{#2}{#1}}
 \long\def\ifapamodejou#1#2{\@ifundefined{def@jou}{#2}{#1}}
 \long\def\ifapamodedoc#1#2{\@ifundefined{def@doc}{#2}{#1}}
 \long\def\ifapamode#1#2#3{%
- \@ifundefined{def@man}{%
+ \@ifundefined{def@thesis}{%
    \@ifundefined{def@jou}{%
     \@ifundefined{def@doc}{\ClassError{ala7}{Undefined mode state!}}{#3}%
    }{#2}%
   }{#1}%
 }
 
-\@ifundefined{def@man}{}{%
+\@ifundefined{def@thesis}{}{%
 \@ifundefined{long@table}{}{%
  \RequirePackage{array}
  \RequirePackage{longtable}
@@ -330,7 +330,7 @@
 \setlength{\belowbottomsep}{0pt}  % set the distance between the table bottomrule and any notes
 
 \RequirePackage[para,flushleft]{threeparttable}  % this is for nice-looking table footnotes, etc.
-\@ifundefined{def@man}{% BDB
+\@ifundefined{def@thesis}{% BDB
   \def\TPT@doparanotes{\par\vspace{-.5\baselineskip}% BDB
      \prevdepth\z@ \TPT@hsize
      \TPTnoteSettings
@@ -651,7 +651,7 @@
 \newskip\b@level@five@skip  \b@level@five@skip=0\baselineskip \@plus 0.2ex \@minus 0.2ex
 \newskip\e@level@five@skip  \e@level@five@skip=-0.5em
 
-\ifapamodeman{%
+\ifapamodethesis{%
     \b@level@one@skip=0.2\baselineskip \@plus 0.2ex \@minus 0.2ex
     \e@level@one@skip=0.2\baselineskip \@plus .2ex
     \b@level@two@skip=0.2\baselineskip \@plus 0.2ex \@minus 0.2ex
@@ -710,13 +710,13 @@
 
 \AtBeginDocument{\def\st@rtbibsection{\mspart{\refname}}}%  BDB -- this is for apacite
 \AtBeginDocument{\def\bibsection{\mspart{\refname}}}%  BDB -- this is for apacite + natbib
-\newcommand{\mspart}{{\ifapamodeman{\clearpage}{}}\@startsection {section}{1}{\z@}%
+\newcommand{\mspart}{{\ifapamodethesis{\clearpage}{}}\@startsection {section}{1}{\z@}%
     {\b@level@one@skip}{\e@level@one@skip}%
     {\centering\normalfont\normalsize}}
 
 \RequirePackage[singlelinecheck=off]{caption}
 
-\ifapamode{% man
+\ifapamode{% thesis
    \DeclareCaptionLabelFormat{tablelabel}{\hspace{-\parindent}\raggedright\textbf{#1 #2}}
     \DeclareCaptionLabelFormat{figurelabel}{\hspace{-\parindent}\raggedright\textbf{#1 #2}}
     \DeclareCaptionTextFormat{tabletext}{\hspace{-\parindent}\raggedright\textit{#1}}
@@ -911,7 +911,7 @@
   \ClassWarningNoLine{ala7}{Title not defined}\def\@title{Title}}{}
  \@ifundefined{def@multipleaffils}{%
   \ClassWarningNoLine{ala7}{Affiliation not defined}\authorsaffiliations{Affiliation}}{}
-   \@ifundefined{def@stu}{% man mode
+   \@ifundefined{def@stu}{% thesis mode
     \@ifundefined{@shorttitle}{%
    \ClassWarningNoLine{ala7}{Short title not defined}\def\@shorttitle{INSERT SHORTTITLE COMMAND IN PREAMBLE}}{}
   \@ifundefined{@abstract}{%
@@ -955,7 +955,7 @@
 \fi
 }
 
-\newcommand{\fitbitmap}[2][0.5]{ % like fitfigure but no scaling in man mode for best quality
+\newcommand{\fitbitmap}[2][0.5]{ % like fitfigure but no scaling in thesis mode for best quality
 \sbox\gr@box{\includegraphics[width=\linewidth]{#2}}
 \settoheight{\gr@boxheight}{\usebox\gr@box}
 \ifdim\gr@boxheight>\textheight%
@@ -987,7 +987,7 @@
 
 \def\apaSevenvector#1{{\ensuremath
   \uprightlowercasegreek
-  \ifapamodeman
+  \ifapamodethesis
   {\apaSevensmash{\mathop{\kern\z@\mathrm{#1}}\limits_{\scriptscriptstyle\sim}}}%
   {\if@bm@loaded\bm{\mathrm{#1}}\else\mathbf{#1}\fi% in case bm is not available
   }%
@@ -1038,10 +1038,10 @@
 \renewcommand{\theappendix}{\@Alph\c@appendix}
 \def\apaSevenappfig{%
  \renewcommand\thefigure{\theappendix\@arabic\c@figure}%
- \ifapamodeman{\renewcommand\thepostfig{\theappendix\arabic{postfig}}}{}}
+ \ifapamodethesis{\renewcommand\thepostfig{\theappendix\arabic{postfig}}}{}}
 \def\apaSevenapptab{%
  \renewcommand\thetable{\theappendix\@arabic\c@table}%
- \ifapamodeman{\renewcommand\theposttbl{\theappendix\arabic{posttbl}}}{}}
+ \ifapamodethesis{\renewcommand\theposttbl{\theappendix\arabic{posttbl}}}{}}
 \def\apaSevenappeq{%
  \renewcommand\theequation{\theappendix\@arabic\c@equation}}
 \newif\ifoneappendix
@@ -1050,7 +1050,7 @@
 \appendixfalse
 
 \def\appendix{%
-  \ifapamodeman{\processdelayedfloats}{}%  BDB -- output all tables and figures prior to the appendix
+  \ifapamodethesis{\processdelayedfloats}{}%  BDB -- output all tables and figures prior to the appendix
   \appendixtrue
   \apaSevenappfig
   \apaSevenapptab
@@ -1063,7 +1063,7 @@
                    \makeatletter%
                      \def\@currentlabelname{##1}%
                    \makeatother%
-                   \ifapamodeman{%
+                   \ifapamodethesis{%
                     \clearpage
                     \setcounter{postfig}{0}
                     \setcounter{posttbl}{0}
@@ -1093,7 +1093,7 @@
 %%                     %%
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
-\@ifundefined{def@man}{}{%
+\@ifundefined{def@thesis}{}{%
 
 \def\@@spacing{1.655}
 
@@ -1262,7 +1262,7 @@
 
   \vspace*{4\baselineskip}
   \textbf\@title%
-  \ifapamodeman{%
+  \ifapamodethesis{%
     \vspace{\baselineskip}\\
   }{%
     \vspace{\baselineskip}\\
@@ -1381,7 +1381,7 @@
 
 
 
-}% end of man mode (manuscript format)
+}% end of thesis mode (manuscript format)
 
 %%%%%%%%%%%%%%%%%%%%
 %%                %%
