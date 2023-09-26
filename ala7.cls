@@ -334,7 +334,8 @@
 % Language-specific definition of strings is handled externally -- thp 2005/12/30
 % Based on handling of the same issue in apacite.sty
 
-% First define the default American English macros in case no external file is present or needed\def\lastauthorseparator{and}
+% First define the default American English macros in case no external file is present or needed
+\def\lastauthorseparator{and}
 \def\acksname{Author Note}
 \def\keywordname{Keywords}
 \def\notesname{Footnotes}
@@ -1251,11 +1252,11 @@
   %========= Maketitle, margins, lengths, etc. ==========
 
   \def\maketitle{
-  \@ifundefined{hrm}{}{\hrm}
-  \check@author
-
+    \@ifundefined{hrm}{}{\hrm}
+    \check@author
+  
     \begin{center}
-
+  
       \vspace*{4\baselineskip}
       \textbf\@title%
       \ifapamodethesis{%
@@ -1263,72 +1264,43 @@
       }{%
         \vspace{\baselineskip}\\
       }
+  
 
-      { %Professional manuscript
-        \@ifundefined{apaSeven@maskauthoridentity}{%  BDB
-          \displayauthors \\
-          \displayaffiliations
-          \@ifundefined{@note}
-          {\vspace*{\baselineskip} }
-          {\@note}
-        }{%  mask author identity -- show nothing in the author or author note space
+      \@ifundefined{apaseven@maskauthoridentity}
+      {%  bdb
+        \displayauthors \\
+        \displayaffiliations
+        \@ifundefined{@note}
+        {\vspace*{\baselineskip} }
+        {\@note}
+      }{%  mask author identity -- show nothing in the author or author note space
       }
 
     \end{center}
 
-    \@ifundefined{apaSeven@maskauthoridentity}{
-        \@ifundefined{@acks}
-        {}
-        {%
-          \vfill%
-          \section*{\normalfont\normalsize\textbf\acksname}
-          \raggedright
-          \setlength{\parindent}{0.5in}
-          \indent\@acks\par%
-        }
-    }{%  mask author identity -- show nothing in the author or author note space
-    }}{% Student Manuscript
-      \@ifundefined{apaSeven@maskauthoridentity}{%  BDB
-        \displayauthors \\
-
-        \displayaffiliations
-      }{%  mask author identity -- show nothing in the author or affiliations space
+    \@ifundefined{apaseven@maskauthoridentity}
+    {
+      \@ifundefined{@acks}
+      {}
+      {%
+        \vfill%
+        \section*{\normalfont\normalsize\textbf\acksname}
+        \raggedright
+        \setlength{\parindent}{0.5in}
+        \indent\@acks\par%
       }
-        \@course \\
-        \@professor \\
-        \@duedate \\
-
-      \@ifundefined{apaSeven@maskauthoridentity}{%  BDB
-        \@ifundefined{@note}
-        {\vspace*{\baselineskip} }
-        {\@note}
-      }{%  mask author identity -- show nothing in the note space
-      }
-
-          \end{center}
-
-        \@ifundefined{@acks}
-        {}
-        {%
-          \@ifundefined{apaSeven@maskauthoridentity}{%  BDB
-            \vfill%
-            \section*{\normalfont\normalsize\textbf\acksname}
-            \raggedright
-            \setlength{\parindent}{0.5in}
-            \indent\@acks\par%
-          }{%  mask author identity -- show nothing in the author note space
-          }
-        }
-
     }
+    {%  mask author identity -- show nothing in the author or author note space
+    }
+  
     \newpage
-    %BDB\hyphenpenalty 10000
+    %bdb\hyphenpenalty 10000
     \fussy
     \@ifundefined{@abstract}{}{%
-      \section*{\normalfont\normalsize\textbf\abstractname}% BDB
-      \noindent\@abstract\par% BDB
+      \section*{\normalfont\normalsize\textbf\abstractname}% bdb
+      \noindent\@abstract\par% bdb
       \@ifundefined{@keywords}{}{%
-        \setlength{\parindent}{0.5in}% BDB
+        \setlength{\parindent}{0.5in}% bdb
         \indent\textit{\keywordname:} \@keywords%
       }%
       \newpage
