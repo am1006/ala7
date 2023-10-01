@@ -1288,7 +1288,7 @@
       {\itshape A thesis submitted in partial fulfilment of the requirements for the degree of {\mdseries Bachelor of Business Administration} with Honours in Information Systems at the Australian National University.}
       %
       \vfill
-      \includegraphics[height=2cm]{\Logo}\\[1em]
+      \includegraphics[height=2cm]{\LogoPath}\\[1em]
       {\bfseries \School}\\
       {\mdseries \College}\\
       {The Australian National University}\\[2em]
@@ -1327,6 +1327,12 @@
     \newpage
     %bdb\hyphenpenalty 10000
     \fussy
+
+    % \newcommand{\DeclarationPath} {0.5-declaration.tex}
+    % \newcommand{\AcknowledgementPath} {0.6-acknowledgement.tex}
+
+    \include{\DeclarationPath}
+    \include{\AcknowledgementPath}
 
     \@ifundefined{@abstract}
     {}
