@@ -259,9 +259,11 @@
 
 % choose a paper size and set the page margins
 \@ifundefined{def@aFourPaper}{
-  \RequirePackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+  % \RequirePackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+  \RequirePackage[top=1in, bottom=1in]{geometry}
 }{
-  \RequirePackage[top=1in, bottom=1in, left=1in, right=1in,a4paper]{geometry}
+  % \RequirePackage[top=1in, bottom=1in, left=1in, right=1in, a4paper]{geometry}
+  \RequirePackage[top=1in, bottom=1in, a4paper]{geometry}
 }
 
 \RequirePackage{graphicx}  % this is for including graphics
