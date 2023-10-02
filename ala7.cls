@@ -1273,45 +1273,50 @@
     \@ifundefined{hrm}{}{\hrm}
     \check@author
   
-    \begin{center}
+    \begin{titlepage}
+      \newgeometry{top=1in, bottom=1in, hmarginratio=1:1}    %% make layout symmetric
+      \begin{center}
 
-      \thispagestyle{empty}
-      \vspace*{3\baselineskip}
-      %
-      {\bfseries \huge \@title}
-      %
-      %
-      \vfill
-      \textbf{\Large\AuthorName}
-      %
-      %
+        \thispagestyle{empty}
+
+        \vspace*{3\baselineskip}
+        %
+        {\bfseries \huge \@title}
+        %
+        %
+        \vfill
+        \textbf{\Large\AuthorName}
+        %
+        %
+    
+        \vfill
+        %
+        {\itshape A thesis submitted in partial fulfilment of the requirements for the degree of {\mdseries Bachelor of Business Administration} with Honours in Information Systems at the Australian National University.}
+        %
+        \vfill
+        \includegraphics[height=2cm]{\LogoPath}\\[1em]
+        {\bfseries \School}\\
+        {\mdseries \College}\\
+        {The Australian National University}\\[2em]
+        %
+        {\large\scshape \monthyeardate\today}
   
-      \vfill
-      %
-      {\itshape A thesis submitted in partial fulfilment of the requirements for the degree of {\mdseries Bachelor of Business Administration} with Honours in Information Systems at the Australian National University.}
-      %
-      \vfill
-      \includegraphics[height=2cm]{\LogoPath}\\[1em]
-      {\bfseries \School}\\
-      {\mdseries \College}\\
-      {The Australian National University}\\[2em]
-      %
-      {\large\scshape \monthyeardate\today}
-
-
-      % \@ifundefined{apaseven@maskauthoridentity}
-      % {%  bdb
-      %   \displayauthors \\
-      %   \displayaffiliations
-      %   \@ifundefined{@note}
-      %   {\vspace*{\baselineskip} }
-      %   {\@note}
-      % }
-      % {%  mask author identity -- show nothing in the author or author note space
-      % }
-
-    \end{center}
-
+  
+        % \@ifundefined{apaseven@maskauthoridentity}
+        % {%  bdb
+        %   \displayauthors \\
+        %   \displayaffiliations
+        %   \@ifundefined{@note}
+        %   {\vspace*{\baselineskip} }
+        %   {\@note}
+        % }
+        % {%  mask author identity -- show nothing in the author or author note space
+        % }
+  
+      \end{center}
+      \restoregeometry              %% restore the layout
+    \end{titlepage}
+  
     \@ifundefined{apaseven@maskauthoridentity}
     {
       \@ifundefined{@acks}
