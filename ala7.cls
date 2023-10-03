@@ -704,6 +704,7 @@
 
 % Refer to LaTeX book to modify, if you want, spaces before and after of
 %  \begin{...} ... \end{...} or spaces between \item-s.\newcounter{APAenum}
+\newcounter{APAenum}
 \newskip\@text@par@indent
 \def\APAenumerate{\@text@par@indent\parindent\setbox0\hbox{1. }%
     \list{\arabic{APAenum}.}{\usecounter{APAenum}
