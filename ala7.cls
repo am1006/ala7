@@ -113,6 +113,10 @@
   \def\def@aFourPaper{\@aFourPapermode}
 }
 
+\DeclareOption{twoside}{%
+  \def\def@twoside{\@twosidemode}
+}
+
 \DeclareOption{apacite}{% BDB
   \def\def@apacite{\@apacitemode}
 }
@@ -260,11 +264,18 @@
 % choose a paper size and set the page margins
 % Use "showframe" option to inspect the margins
 \@ifundefined{def@aFourPaper}{
-  % \RequirePackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
-  \RequirePackage[top=1in, bottom=1in]{geometry}
+  \@ifundefined{def@twoside}{
+    \RequirePackage[top=1in, bottom=1in, inner=1in, outer=1in]{geometry}
+  }{
+    \RequirePackage[top=1in, bottom=1in]{geometry}
+  }
 }{
-  % \RequirePackage[top=1in, bottom=1in, left=1in, right=1in, a4paper]{geometry}
-  \RequirePackage[top=1in, bottom=1in, a4paper]{geometry}
+  \@ifundefined{def@twoside}{
+    % twoside is not defined
+    \RequirePackage[top=1in, bottom=1in, inner=1in, outer=1in, a4paper]{geometry}
+  }{
+    \RequirePackage[top=1in, bottom=1in, a4paper]{geometry}
+  }
 }
 
 \RequirePackage{graphicx}  % this is for including graphics
