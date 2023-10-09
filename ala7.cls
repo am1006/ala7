@@ -619,27 +619,52 @@
 
 %========== APA Section spacing
 
+% Here we used extensively the glue stretching and shrinking capabilities of TeX
+% https://tex.stackexchange.com/questions/64756/what-is-glue-stretching
+
+% Section
 \newskip\b@level@one@skip   \b@level@one@skip=2.5ex plus 1ex minus .2ex
 \newskip\e@level@one@skip   \e@level@one@skip=1.5ex plus .6ex minus .1ex
+
+% Subsection
 \newskip\b@level@two@skip   \b@level@two@skip=2.5ex plus 1ex minus .2ex
 \newskip\e@level@two@skip   \e@level@two@skip=1.5ex plus .6ex minus .1ex
+
+% Subsubsection
 \newskip\b@level@three@skip \b@level@three@skip=2.0ex plus .8ex minus .2ex
 \newskip\e@level@three@skip \e@level@three@skip=1.5ex plus .6ex minus .1ex
+
+% Paragraph
 \newskip\b@level@four@skip  \b@level@four@skip=0\baselineskip \@plus 0.2ex \@minus 0.2ex
 \newskip\e@level@four@skip  \e@level@four@skip=-0.5em
+
+% Subparagraph
 \newskip\b@level@five@skip  \b@level@five@skip=0\baselineskip \@plus 0.2ex \@minus 0.2ex
 \newskip\e@level@five@skip  \e@level@five@skip=-0.5em
 
+
 \ifapamodethesis{%
-    \b@level@one@skip=0.2\baselineskip \@plus 0.2ex \@minus 0.2ex
-    \e@level@one@skip=0.2\baselineskip \@plus .2ex
-    \b@level@two@skip=0.2\baselineskip \@plus 0.2ex \@minus 0.2ex
-    \e@level@two@skip=0.2\baselineskip \@plus 0.2ex
-    \b@level@three@skip=0.2\baselineskip \@plus 0.2ex \@minus 0.2ex
-    \e@level@three@skip=0.2\baselineskip \@plus 0.2ex
-    \b@level@four@skip=0\baselineskip \@plus 0.2ex \@minus 0.2ex
-    \e@level@four@skip=-0.5em
-    \b@level@five@skip=0\baselineskip \@plus 0.2ex \@minus 0.2ex
+    % \setlength{\parskip}{1\baselineskip} % don't use this! use package parskip instead
+    \RequirePackage[skip=1\baselineskip]{parskip}
+
+    % Section
+    \b@level@one@skip=2\baselineskip   \@plus 0.2ex \@minus 0.2ex
+    \e@level@one@skip=0.2\baselineskip% \@plus 0.2ex
+
+    % Subsection
+    \b@level@two@skip=1\baselineskip    \@plus 0.2ex \@minus 0.2ex
+    \e@level@two@skip=0.2\baselineskip%  \@plus 0.2ex
+
+    % Subsubsection
+    \b@level@three@skip=0.5\baselineskip \@plus 0.1ex \@minus 0.2ex
+    \e@level@three@skip=0.2\baselineskip %\@minus 0.2ex
+
+    % Paragraph
+    \b@level@four@skip=1\baselineskip %\@plus 0.2ex \@minus 0.2ex
+    \e@level@four@skip=-1em
+
+    % Subparagraph
+    \b@level@five@skip=0.5\baselineskip %\@plus 0.2ex \@minus 0.2ex
     \e@level@five@skip=-0.5em
 }{}
 
@@ -651,7 +676,11 @@
 \RequirePackage{titlesec}
 
 \titleformat{\chapter}[display]
-  {\centering\normalfont\large\bfseries}{Chapter \thechapter}{0.5em}{\centering\Large}
+  {\centering\normalfont\Large\bfseries}
+    % With the report class the space before a chapter title is 50pt by default.
+    {Chapter \thechapter}
+    {-25pt} % the gap between number and text is calculated as 50pt - specified length
+  {\centering\huge}
 
 % \renewcommand{\chapter}{\@startsection{chapter}{1}{\z@}%
 %     {\b@level@one@skip}{\e@level@one@skip}%
@@ -659,11 +688,13 @@
 
 \renewcommand{\section}{\@startsection {section}{1}{\z@}%
     {\b@level@one@skip}{\e@level@one@skip}%
-    {\centering\normalfont\normalsize\bfseries}}
+    % {\centering\normalfont\normalsize\bfseries}}
+    {\normalfont\Large\bfseries}}
 
 \renewcommand{\subsection}{\@startsection{subsection}{2}{\z@}%
     {\b@level@two@skip}{\e@level@two@skip}%
-    {\normalfont\normalsize\bfseries}}
+    % {\normalfont\normalsize\bfseries}}
+    {\normalfont\large\bfseries}}
 
 \newcommand*{\typesectitle}[1]{#1\addperi}
 
@@ -675,7 +706,8 @@
 
 \renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{\z@}%
     {\b@level@three@skip}{\e@level@three@skip}%
-    {\normalfont\normalsize\bfseries\itshape}}
+    % {\normalfont\normalsize\bfseries\itshape}}
+    {\normalfont\large\bfseries\itshape}}
 
 \renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
     {\b@level@four@skip}%
@@ -1065,8 +1097,10 @@
                   \setcounter{figure}{0}%
                   \setcounter{table}{0}%
                   \setcounter{equation}{0}%
+
                   % Add the appendix counter to the section title
-                  \vskip2.5ex%
+                  % \vskip2.5ex%
+                  \vspace*{50pt} % With the report class the space before a chapter title is 50pt
 
                   \refstepcounter{appendix}% 2002/07/20 this takes care of references too
                    % Set the `oneappendix` flag to false if there is more than one appendix section
@@ -1078,18 +1112,15 @@
 
                   % Format the chapter title to include the appendix counter (if there is more than one appendix chapter)
                   \centerline{
-                    \normalfont\large\textbf\appendixname\ifoneappendix
-                    \else~\large\textbf\theappendix\fi
+                    \normalfont\Large\textbf\appendixname\ifoneappendix
+                    \else~\Large\textbf\theappendix\fi
                   }%
 
-                  \vskip0.5em
-
-
-% \titleformat{\chapter}[display]
-%   {\centering\normalfont\large\bfseries}{Chapter \thechapter}{1em}{\centering\Large}
+                  \vspace*{20pt} % so that it's consistent with the spacing of the chapter title
 
                   % Format the section title and set the paragraph indentation to 0.5 inches
-                  \centerline{\normalfont\Large\bfseries##1}\par%
+                  \centerline{\normalfont\Huge\bfseries##1}\par%
+
                   \setlength{\parindent}{0.5in}
 
                   % Use the `\makeatletter` and `\makeatother` commands to allow the use of the `@` symbol in macro names
@@ -1486,4 +1517,4 @@
 %%                                 bibliography.bib.
 %% 
 %%
-%% End of file `apa7.cls'.
+%% End of file `apa7.cls'.1
