@@ -1170,8 +1170,14 @@
       \rhead{\thepage}%
   }
   \fancypagestyle{otherpage}{%
-      \lhead{\MakeUppercase{\@shorttitle}}%
+      % \lhead{\MakeUppercase{\@shorttitle}}%
+      \lhead{\MakeUppercase{\rightmark}}%
       \rhead{\thepage}%
+  }
+  \fancypagestyle{refappenpage}{%
+    % \lhead{\MakeUppercase{\@shorttitle}}%
+    \lhead{}%
+    \rhead{\thepage}%
   }
   \pagestyle{otherpage}
 
@@ -1328,22 +1334,37 @@
         %
         %
         \vfill
-        \textbf{\Large\AuthorName}
+        \textbf{\Large\AuthorName}\\
+        %
+        \begin{CJK*}{UTF8}{gkai} % bkai or gkai
+          {\Large\AuthorChineseName}
+        \end{CJK*}
         %
         %
     
         \vfill
         %
-        {\itshape A thesis submitted in partial fulfilment of the requirements for the degree of {\mdseries Bachelor of Business Administration} with Honours in Information Systems at the Australian National University.}
+        {\itshape A thesis submitted in partial fulfilment of the requirements for the degree of\\ {\mdseries Bachelor of Business Administration} with Honours in Information Systems \\ at the Australian National University.}
         %
         \vfill
-        \includegraphics[height=2cm]{\LogoPath}\\[1em]
-        {\bfseries \School}\\
-        {\mdseries \College}\\
-        {The Australian National University}\\[2em]
         %
         {\large\scshape \monthyeardate\today}
-  
+
+        \newpage
+        \thispagestyle{empty}
+        \hspace{0pt} % We need this line to make sure the \vfill works.
+        \vfill
+          Typeset in Libertine by \LaTeX.
+
+          \copyright {\xspace \AuthorName} 2023
+
+          \textit{in}
+
+          {\bfseries \School}\\
+          {\mdseries \College}\\
+          {The Australian National University}\\[2em]
+          \includegraphics[height=2cm]{\LogoPath}
+        \vfill
   
         % \@ifundefined{apaseven@maskauthoridentity}
         % {%  bdb
