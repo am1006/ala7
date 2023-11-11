@@ -1356,7 +1356,7 @@
         \thispagestyle{empty}
         \hspace{0pt} % We need this line to make sure the \vfill works.
         \vfill
-          Typeset in Libertine by \LaTeX.
+          Typeset in Libertine and {\sffamily Biolinum} by \LaTeX.
 
           \copyright {\xspace \AuthorName} 2023
 
