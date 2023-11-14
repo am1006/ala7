@@ -650,15 +650,15 @@
     \RequirePackage[skip=1\baselineskip]{parskip}
 
     % Section
-    \b@level@one@skip=2\baselineskip   \@plus 0.2ex \@minus 0.2ex
+    \b@level@one@skip=1.5\baselineskip%   \@plus 0.2ex \@minus 0.2ex
     \e@level@one@skip=0.2\baselineskip% \@plus 0.2ex
 
     % Subsection
-    \b@level@two@skip=1\baselineskip    \@plus 0.2ex \@minus 0.2ex
+    \b@level@two@skip=1\baselineskip %   \@plus 0.2ex \@minus 0.2ex
     \e@level@two@skip=0.2\baselineskip%  \@plus 0.2ex
 
     % Subsubsection
-    \b@level@three@skip=0.5\baselineskip \@plus 0.1ex \@minus 0.2ex
+    \b@level@three@skip=0.5\baselineskip % \@plus 0.1ex \@minus 0.2ex
     \e@level@three@skip=0.2\baselineskip %\@minus 0.2ex
 
     % Paragraph
@@ -1432,6 +1432,8 @@
     {}%
 
     \raggedright%
+
+    % Control the indentation and spacing of paragraphs
     \setlength{\parindent}{0.5in}%
   }
 
